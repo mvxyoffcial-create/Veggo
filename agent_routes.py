@@ -1,8 +1,10 @@
 """Agent panel routes - Server-rendered HTML"""
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from bson.objectid import ObjectId
+from datetime import datetime, timedelta
 from functools import wraps
+import secrets
 
 agent_bp = Blueprint('agent', __name__, url_prefix='/agent')
 
@@ -21,52 +23,91 @@ def login():
     if request.method == 'POST':
         from app import agents_col
         
-        email = request.form.get('email')
-        password = request.form.get('password')
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '')
+        
+        if not email or not password:
+            flash('Email and password are required', 'error')
+            return render_template('agent/login.html')
         
         agent = agents_col.find_one({'email': email})
         
-        if agent and check_password_hash(agent['password'], password):
-            if not agent.get('approved', False):
-                flash('Your account is pending approval', 'error')
-                return render_template('agent/login.html')
-            
-            session['user_id'] = str(agent['_id'])
-            session['role'] = 'DELIVERY_AGENT'
-            session['username'] = agent['name']
-            flash('Login successful!', 'success')
-            return redirect(url_for('agent.dashboard'))
-        else:
+        if not agent:
             flash('Invalid credentials', 'error')
+            return render_template('agent/login.html')
+        
+        if not check_password_hash(agent['password'], password):
+            flash('Invalid credentials', 'error')
+            return render_template('agent/login.html')
+        
+        if not agent.get('verified', False):
+            flash('Please verify your email address first. Check your inbox for verification link.', 'error')
+            return render_template('agent/login.html')
+        
+        if not agent.get('approved', False):
+            flash('Your account is pending admin approval. You will receive an email once approved.', 'error')
+            return render_template('agent/login.html')
+        
+        session['user_id'] = str(agent['_id'])
+        session['role'] = 'DELIVERY_AGENT'
+        session['username'] = agent['name']
+        flash('Login successful!', 'success')
+        return redirect(url_for('agent.dashboard'))
     
     return render_template('agent/login.html')
 
 @agent_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
-    """Agent signup"""
+    """Agent signup with email verification"""
     if request.method == 'POST':
-        from app import agents_col
-        from werkzeug.security import generate_password_hash
-        from datetime import datetime
+        from app import agents_col, email_tokens_col, send_agent_verification_email
+        
+        # Get form data
+        name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip()
+        phone = request.form.get('phone', '').strip()
+        password = request.form.get('password', '')
+        vehicle_type = request.form.get('vehicle_type', '')
+        license_number = request.form.get('license_number', '').strip()
+        
+        # Validate input
+        if not all([name, email, phone, password, vehicle_type, license_number]):
+            flash('All fields are required', 'error')
+            return render_template('agent/signup.html')
         
         # Check if agent exists
-        if agents_col.find_one({'email': request.form.get('email')}):
+        if agents_col.find_one({'email': email}):
             flash('Email already registered', 'error')
             return render_template('agent/signup.html')
         
+        # Create agent
         agent = {
-            'name': request.form.get('name'),
-            'email': request.form.get('email'),
-            'phone': request.form.get('phone'),
-            'password': generate_password_hash(request.form.get('password')),
-            'vehicle_type': request.form.get('vehicle_type'),
-            'license_number': request.form.get('license_number'),
+            'name': name,
+            'email': email,
+            'phone': phone,
+            'password': generate_password_hash(password),
+            'vehicle_type': vehicle_type,
+            'license_number': license_number,
+            'verified': False,
             'approved': False,
             'created_at': datetime.utcnow()
         }
         
-        agents_col.insert_one(agent)
-        flash('Signup successful! Your account is pending admin approval.', 'success')
+        result = agents_col.insert_one(agent)
+        
+        # Generate verification token
+        token = secrets.token_urlsafe(32)
+        email_tokens_col.insert_one({
+            'agent_id': result.inserted_id,
+            'token': token,
+            'type': 'agent_verification',
+            'expires_at': datetime.utcnow() + timedelta(hours=24)
+        })
+        
+        # Send verification email
+        send_agent_verification_email(email, token)
+        
+        flash('Signup successful! Please check your email to verify your account.', 'success')
         return redirect(url_for('agent.login'))
     
     return render_template('agent/signup.html')
@@ -138,7 +179,6 @@ def accept_order(order_id):
 def mark_delivered(order_id):
     """Mark order as delivered"""
     from app import orders_col, users_col, send_order_notification
-    from datetime import datetime
     
     agent_id = ObjectId(session['user_id'])
     
