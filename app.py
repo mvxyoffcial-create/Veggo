@@ -90,7 +90,7 @@ def admin_required(f):
     def decorated(*args, **kwargs):
         if 'user_id' not in session or session.get('role') != 'ADMIN':
             flash('Admin access required', 'error')
-            return redirect(url_for('admin_login'))
+            return redirect(url_for('admin.login'))
         return f(*args, **kwargs)
     return decorated
 
@@ -99,7 +99,7 @@ def agent_required(f):
     def decorated(*args, **kwargs):
         if 'user_id' not in session or session.get('role') != 'DELIVERY_AGENT':
             flash('Agent access required', 'error')
-            return redirect(url_for('agent_login'))
+            return redirect(url_for('agent.login'))
         return f(*args, **kwargs)
     return decorated
 
@@ -118,6 +118,56 @@ Please verify your email address by clicking the link below:
 {verification_url}
 
 This link will expire in 24 hours.
+
+Best regards,
+VEGGO Team
+'''
+    
+    try:
+        mail.send(msg)
+        return True
+    except Exception as e:
+        print(f"Email error: {e}")
+        return False
+
+def send_agent_verification_email(email, token):
+    """Send agent verification email"""
+    verification_url = f"{os.getenv('BASE_URL', 'http://localhost:5000')}/verify-agent?token={token}"
+    
+    msg = Message('Verify Your VEGGO Agent Account', recipients=[email])
+    msg.body = f'''Hello!
+
+Thank you for registering as a delivery agent with VEGGO.
+
+Please verify your email address by clicking the link below:
+{verification_url}
+
+After email verification, your account will be reviewed by our admin team for approval.
+
+This link will expire in 24 hours.
+
+Best regards,
+VEGGO Team
+'''
+    
+    try:
+        mail.send(msg)
+        return True
+    except Exception as e:
+        print(f"Email error: {e}")
+        return False
+
+def send_agent_approval_email(email, agent_name):
+    """Send agent approval notification"""
+    msg = Message('Your VEGGO Agent Account has been Approved!', recipients=[email])
+    msg.body = f'''Hello {agent_name}!
+
+Great news! Your delivery agent account has been approved by our admin team.
+
+You can now login and start accepting delivery orders:
+{os.getenv('BASE_URL', 'http://localhost:5000')}/agent/login
+
+Thank you for joining the VEGGO delivery team!
 
 Best regards,
 VEGGO Team
@@ -320,6 +370,36 @@ def verify_email():
     email_tokens_col.delete_one({'_id': token_doc['_id']})
     
     return jsonify({'message': 'Email verified successfully. You can now login.'})
+
+@app.route('/verify-agent')
+def verify_agent():
+    """Verify agent email address"""
+    token = request.args.get('token')
+    
+    if not token:
+        return jsonify({'error': 'Token required'}), 400
+    
+    token_doc = email_tokens_col.find_one({
+        'token': token,
+        'type': 'agent_verification'
+    })
+    
+    if not token_doc:
+        return jsonify({'error': 'Invalid token'}), 400
+    
+    if datetime.utcnow() > token_doc['expires_at']:
+        return jsonify({'error': 'Token expired'}), 400
+    
+    # Verify agent
+    agents_col.update_one(
+        {'_id': token_doc['agent_id']},
+        {'$set': {'verified': True}}
+    )
+    
+    # Delete token
+    email_tokens_col.delete_one({'_id': token_doc['_id']})
+    
+    return jsonify({'message': 'Email verified successfully. Your account is now pending admin approval.'})
 
 @app.route('/api/v1/auth/forgot-password', methods=['POST'])
 def forgot_password():
