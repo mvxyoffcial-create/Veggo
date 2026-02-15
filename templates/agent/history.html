@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Delivery History - VEGGO{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('agent.dashboard') }}">
+            <i class="fas fa-motorcycle"></i> VEGGO Agent
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('agent.dashboard') }}">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ url_for('agent.history') }}">
+                        <i class="fas fa-history"></i> History
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-link">
+                        <i class="fas fa-user"></i> {{ session.username }}
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('agent.logout') }}">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="fas fa-history"></i> Delivery History</h2>
+
+{% if orders %}
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Address</th>
+                            <th>Total</th>
+                            <th>Delivered At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>{{ order._id }}</td>
+                            <td>
+                                <strong>{{ order.user.username }}</strong><br>
+                                <small class="text-muted">{{ order.user.phone }}</small>
+                            </td>
+                            <td>
+                                {{ order.address.street }}<br>
+                                <small class="text-muted">{{ order.address.city }}</small>
+                            </td>
+                            <td>Rs. {{ order.total }}</td>
+                            <td>
+                                {% if order.delivered_at %}
+                                    {{ order.delivered_at.strftime('%Y-%m-%d %H:%M') }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="alert alert-info text-center">
+        <i class="fas fa-info-circle"></i> No delivery history yet.
+    </div>
+{% endif %}
+{% endblock %}
