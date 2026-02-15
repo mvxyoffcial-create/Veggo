@@ -1,0 +1,40 @@
+# Koyeb deployment configuration
+
+# Service Configuration
+name: veggo-service
+region: fra  # Frankfurt (or use was for US East, or sin for Singapore)
+
+# Build Configuration
+build:
+  buildpack: python
+  python_version: 3.11
+
+# Run Configuration
+run:
+  command: gunicorn main:app --bind 0.0.0.0:$PORT --workers 4 --timeout 120
+
+# Health Check
+health_check:
+  path: /health
+  port: 8000
+  initial_delay: 30
+  timeout: 10
+
+# Environment Variables (set in Koyeb dashboard)
+# - SECRET_KEY
+# - JWT_SECRET
+# - MONGO_URI
+# - MAIL_SERVER
+# - MAIL_PORT
+# - MAIL_USERNAME
+# - MAIL_PASSWORD
+# - MAIL_DEFAULT_SENDER
+# - BASE_URL
+
+# Scaling
+instances:
+  min: 1
+  max: 2
+
+# Port
+port: 8000
