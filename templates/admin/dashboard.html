@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - VEGGO{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('admin.dashboard') }}">
+            <i class="fas fa-leaf"></i> VEGGO Admin
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('admin.dashboard') }}">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('admin.users') }}">
+                        <i class="fas fa-users"></i> Users
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('admin.products') }}">
+                        <i class="fas fa-box"></i> Products
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('admin.orders') }}">
+                        <i class="fas fa-shopping-cart"></i> Orders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('admin.agents') }}">
+                        <i class="fas fa-motorcycle"></i> Agents
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('admin.logout') }}">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Dashboard Overview</h2>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="stat-card text-center">
+            <i class="fas fa-users text-primary"></i>
+            <h3>{{ stats.total_users }}</h3>
+            <p class="text-muted">Total Users</p>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card text-center">
+            <i class="fas fa-box text-success"></i>
+            <h3>{{ stats.total_products }}</h3>
+            <p class="text-muted">Total Products</p>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card text-center">
+            <i class="fas fa-shopping-cart text-warning"></i>
+            <h3>{{ stats.total_orders }}</h3>
+            <p class="text-muted">Total Orders</p>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card text-center">
+            <i class="fas fa-motorcycle text-info"></i>
+            <h3>{{ stats.total_agents }}</h3>
+            <p class="text-muted">Delivery Agents</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-warning text-white">
+                <h5><i class="fas fa-clock"></i> Pending Orders</h5>
+            </div>
+            <div class="card-body">
+                <h2 class="text-center">{{ stats.pending_orders }}</h2>
+                <p class="text-center text-muted">Orders awaiting processing</p>
+                <a href="{{ url_for('admin.orders') }}" class="btn btn-warning w-100">View Orders</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5><i class="fas fa-user-clock"></i> Pending Agents</h5>
+            </div>
+            <div class="card-body">
+                <h2 class="text-center">{{ stats.pending_agents }}</h2>
+                <p class="text-center text-muted">Agents awaiting approval</p>
+                <a href="{{ url_for('admin.agents') }}" class="btn btn-info w-100">View Agents</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h5><i class="fas fa-list"></i> Recent Orders</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in recent_orders %}
+                    <tr>
+                        <td>{{ order._id }}</td>
+                        <td>Rs. {{ order.total }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'success' if order.status == 'delivered' else 'warning' }}">
+                                {{ order.status }}
+                            </span>
+                        </td>
+                        <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
