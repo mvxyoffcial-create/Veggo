@@ -22,12 +22,23 @@ def login():
     if request.method == 'POST':
         from app import admins_col
         
-        email = request.form.get('email')
-        password = request.form.get('password')
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '')
         
+        # Validate input
+        if not email or not password:
+            flash('Email and password are required', 'error')
+            return render_template('admin/login.html')
+        
+        # Find admin
         admin = admins_col.find_one({'email': email})
         
-        if admin and check_password_hash(admin['password'], password):
+        if not admin:
+            flash('Invalid credentials', 'error')
+            return render_template('admin/login.html')
+        
+        # Check password
+        if check_password_hash(admin['password'], password):
             session['user_id'] = str(admin['_id'])
             session['role'] = 'ADMIN'
             session['username'] = admin['username']
@@ -57,7 +68,7 @@ def dashboard():
         'total_orders': orders_col.count_documents({}),
         'pending_orders': orders_col.count_documents({'status': 'pending'}),
         'total_agents': agents_col.count_documents({}),
-        'pending_agents': agents_col.count_documents({'approved': False})
+        'pending_agents': agents_col.count_documents({'approved': False, 'verified': True})
     }
     
     recent_orders = list(orders_col.find().sort('created_at', -1).limit(10))
@@ -248,12 +259,25 @@ def agents():
 @admin_required
 def approve_agent(agent_id):
     """Approve delivery agent"""
-    from app import agents_col
+    from app import agents_col, send_agent_approval_email
+    
+    agent = agents_col.find_one({'_id': ObjectId(agent_id)})
+    
+    if not agent:
+        flash('Agent not found', 'error')
+        return redirect(url_for('admin.agents'))
+    
+    if not agent.get('verified'):
+        flash('Agent email must be verified first', 'error')
+        return redirect(url_for('admin.agents'))
     
     agents_col.update_one(
         {'_id': ObjectId(agent_id)},
         {'$set': {'approved': True}}
     )
+    
+    # Send approval email
+    send_agent_approval_email(agent['email'], agent['name'])
     
     flash('Agent approved successfully', 'success')
     return redirect(url_for('admin.agents'))
