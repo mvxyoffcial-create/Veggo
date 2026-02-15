@@ -1,0 +1,552 @@
+/* ================================================
+   VEGGO - Responsive Design & Mobile Optimization
+   Mobile-First Approach
+   ================================================ */
+
+/* ================================================
+   Base Mobile Styles (< 576px)
+   ================================================ */
+@media (max-width: 575.98px) {
+    /* Typography */
+    html {
+        font-size: 14px;
+    }
+    
+    h1 { font-size: 1.75rem; }
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.25rem; }
+    h4 { font-size: 1.125rem; }
+    h5 { font-size: 1rem; }
+    
+    /* Container & Spacing */
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    /* Navigation */
+    .navbar-brand {
+        font-size: 1.125rem;
+    }
+    
+    .nav-link {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.9rem;
+    }
+    
+    /* Cards */
+    .card {
+        margin-bottom: 1rem;
+        border-radius: 8px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .card-header {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+    
+    /* Stat Cards */
+    .stat-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-card i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-card h3 {
+        font-size: 1.75rem;
+    }
+    
+    .stat-card p {
+        font-size: 0.75rem;
+    }
+    
+    /* Tables */
+    .table {
+        font-size: 0.85rem;
+    }
+    
+    .table thead th,
+    .table tbody td {
+        padding: 0.5rem;
+    }
+    
+    .table-responsive {
+        border-radius: 8px;
+    }
+    
+    /* Buttons */
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+    
+    .btn-sm {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.75rem;
+    }
+    
+    .btn i {
+        font-size: 0.875rem;
+    }
+    
+    /* Forms */
+    .form-control,
+    .form-select {
+        padding: 0.625rem 0.875rem;
+        font-size: 0.9rem;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+        margin-bottom: 0.375rem;
+    }
+    
+    /* Badges */
+    .badge {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.65rem;
+    }
+    
+    /* Alerts */
+    .alert {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+    }
+    
+    .alert i {
+        font-size: 1.125rem;
+    }
+    
+    /* Order Cards */
+    .order-card .card-body {
+        padding: 0.875rem;
+    }
+    
+    /* Modal adjustments */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    /* Hide long text on mobile */
+    .mobile-hide-text {
+        display: none;
+    }
+    
+    /* Stack buttons vertically */
+    .btn-group-mobile {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .btn-group-mobile .btn {
+        width: 100%;
+    }
+    
+    /* Table actions */
+    .table .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Dashboard grid */
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+/* ================================================
+   Small Devices (576px - 767px)
+   ================================================ */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    html {
+        font-size: 15px;
+    }
+    
+    .stat-card {
+        padding: 1.25rem;
+    }
+    
+    .stat-card h3 {
+        font-size: 2rem;
+    }
+    
+    .card-body {
+        padding: 1.25rem;
+    }
+    
+    /* 2 columns for stat cards */
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+/* ================================================
+   Medium Devices (768px - 991px)
+   ================================================ */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .navbar-brand {
+        font-size: 1.375rem;
+    }
+    
+    .stat-card {
+        padding: 1.5rem;
+    }
+    
+    .stat-card h3 {
+        font-size: 2.25rem;
+    }
+    
+    /* 2 columns for cards */
+    .card-grid-md {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+/* ================================================
+   Large Devices (992px - 1199px)
+   ================================================ */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .container {
+        max-width: 960px;
+    }
+    
+    /* 3 columns for stat cards */
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+/* ================================================
+   Extra Large Devices (≥ 1200px)
+   ================================================ */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+    
+    /* 4 columns for stat cards */
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2rem;
+    }
+    
+    .card-body {
+        padding: 2rem;
+    }
+    
+    .stat-card {
+        padding: 2rem;
+    }
+}
+
+/* ================================================
+   Touch Device Optimizations
+   ================================================ */
+@media (hover: none) and (pointer: coarse) {
+    /* Increase tap targets */
+    .btn,
+    .nav-link,
+    a {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .card:hover {
+        transform: none;
+    }
+    
+    .hover-lift:hover {
+        transform: none;
+    }
+    
+    /* Improve form inputs for touch */
+    .form-control,
+    .form-select {
+        font-size: 16px; /* Prevents zoom on iOS */
+        padding: 0.75rem;
+    }
+    
+    /* Better checkbox/radio sizing */
+    input[type="checkbox"],
+    input[type="radio"] {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* ================================================
+   Landscape Orientation
+   ================================================ */
+@media (orientation: landscape) and (max-height: 500px) {
+    /* Reduce vertical spacing in landscape */
+    .navbar {
+        padding: 0.5rem 0;
+    }
+    
+    .card {
+        margin-bottom: 0.75rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+    }
+    
+    .stat-card i {
+        font-size: 1.5rem;
+    }
+    
+    .stat-card h3 {
+        font-size: 1.5rem;
+    }
+}
+
+/* ================================================
+   Print Optimization
+   ================================================ */
+@media print {
+    /* Hide non-essential elements */
+    .navbar,
+    .btn,
+    .alert,
+    .nav,
+    .sidebar,
+    .form-control {
+        display: none !important;
+    }
+    
+    /* Optimize layout */
+    body {
+        background: white;
+        color: black;
+    }
+    
+    .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+    }
+    
+    .table {
+        page-break-inside: auto;
+    }
+    
+    .table tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+    
+    /* Show full URLs for links */
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+}
+
+/* ================================================
+   High DPI Displays
+   ================================================ */
+@media (-webkit-min-device-pixel-ratio: 2),
+       (min-resolution: 192dpi) {
+    /* Sharper borders */
+    .card,
+    .btn,
+    .form-control {
+        border-width: 0.5px;
+    }
+}
+
+/* ================================================
+   Utility Classes for Responsive Design
+   ================================================ */
+
+/* Hide on mobile */
+.d-mobile-none {
+    display: none !important;
+}
+
+@media (min-width: 768px) {
+    .d-mobile-none {
+        display: block !important;
+    }
+}
+
+/* Show only on mobile */
+.d-mobile-only {
+    display: block !important;
+}
+
+@media (min-width: 768px) {
+    .d-mobile-only {
+        display: none !important;
+    }
+}
+
+/* Text alignment responsive */
+.text-sm-left { text-align: left !important; }
+.text-sm-center { text-align: center !important; }
+.text-sm-right { text-align: right !important; }
+
+@media (min-width: 768px) {
+    .text-md-left { text-align: left !important; }
+    .text-md-center { text-align: center !important; }
+    .text-md-right { text-align: right !important; }
+}
+
+/* Flex direction responsive */
+.flex-sm-column { flex-direction: column !important; }
+.flex-sm-row { flex-direction: row !important; }
+
+@media (min-width: 768px) {
+    .flex-md-column { flex-direction: column !important; }
+    .flex-md-row { flex-direction: row !important; }
+}
+
+/* Order responsive */
+.order-sm-first { order: -1 !important; }
+.order-sm-last { order: 999 !important; }
+
+@media (min-width: 768px) {
+    .order-md-first { order: -1 !important; }
+    .order-md-last { order: 999 !important; }
+}
+
+/* ================================================
+   Mobile-Specific Components
+   ================================================ */
+
+/* Mobile menu toggle */
+.mobile-menu-toggle {
+    display: block;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+@media (min-width: 768px) {
+    .mobile-menu-toggle {
+        display: none;
+    }
+}
+
+/* Mobile search bar */
+.mobile-search {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+    .mobile-search {
+        width: auto;
+        margin-bottom: 0;
+    }
+}
+
+/* Mobile card actions */
+.mobile-card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+@media (min-width: 576px) {
+    .mobile-card-actions {
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+}
+
+/* Scrollable tables on mobile */
+.table-mobile-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-mobile-scroll table {
+    min-width: 600px;
+}
+
+/* Mobile-friendly navigation */
+@media (max-width: 767.98px) {
+    .navbar-collapse {
+        background: rgba(46, 204, 113, 0.95);
+        padding: 1rem;
+        margin-top: 1rem;
+        border-radius: 8px;
+    }
+    
+    .nav-link {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 0.75rem !important;
+    }
+    
+    .nav-link:last-child {
+        border-bottom: none;
+    }
+}
+
+/* ================================================
+   Accessibility for Small Screens
+   ================================================ */
+@media (max-width: 575.98px) {
+    /* Ensure touch targets are at least 44x44 */
+    button,
+    a,
+    input[type="button"],
+    input[type="submit"],
+    .btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Increase spacing for better readability */
+    p {
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+    
+    /* Better focus indicators */
+    :focus-visible {
+        outline: 3px solid var(--primary);
+        outline-offset: 3px;
+    }
+}
+
+/* ================================================
+   Performance Optimizations
+   ================================================ */
+@media (max-width: 767.98px) {
+    /* Reduce animations on mobile */
+    .animate-fade-in,
+    .animate-fade-in-up,
+    .animate-slide-in-up {
+        animation-duration: 0.3s;
+    }
+    
+    /* Disable complex animations */
+    .animate-float,
+    .animate-pulse {
+        animation: none;
+    }
+}
